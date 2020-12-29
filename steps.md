@@ -13,22 +13,24 @@ then boot and run raspi-config
 * under interfacing disable serial console, enable port 
 * enable ssh
 
-install vim
+update
 
     apt-get update 
-    apt-get install vim 
 
-change keyboard:
-
-    vim /etc/default/keyboard 
-
-change gb to us, reboot
 
 change pi username to music. first make root password
 
     sudo passwd root
 
-use 'music'.  then logout and login as root (have to disable autologin first).  change name
+use 'music'.  
+
+then logout 
+
+    logout
+
+and login as root 
+
+them change name
 
     usermod -l music pi
 
@@ -51,27 +53,14 @@ configure
     git config --global user.email "..."
     git config --global user.name "..."
     
-pull down this repo
 
-    git clone https://github.com/owenosborn/Organelle_M_rootfs.git
-    cd Organelle_M_rootfs
 
-# setup WM8731 audio driver with SPI control
+# setup PCM5102a audio driver
 
 update kernel
  
     rpi-update 
     reboot 
-
-fix audio driver for spi (replace 4.19.42 with whatever kernel version running)
- 
-    cd ~/Organelle_M_rootfs/audio
-    ./fixit /lib/modules/4.19.42-v7+/kernel/sound/soc/bcm/snd-soc-audioinjector-pi-soundcard.ko
-
-compile new dt overlay for spi
-
-    cp audioinjector-wm8731-audio-spi-overlay.dts /boot
-    sudo dtc -@ -I dts -O dtb -o /boot/overlays/wm8731-spi.dtbo /boot/audioinjector-wm8731-audio-spi-overlay.dts
 
 # config.txt
 
@@ -81,14 +70,14 @@ comment:
 
 uncomment:
 
-    disable_overscan=1
     hdmi_force_hotplug=1
     dtparam=i2c_arm=on
+    dtparam=i2s=on
     dtparam=spi=on
     
 add these:
 
-    dtoverlay=wm8731-spi
+    dtoverlay=hifiberry-dac
     dtoverlay=gpio-poweroff,gpiopin=12,active_low="y"
     dtoverlay=pi3-miniuart-bt
     dtoverlay=midi-uart0 
@@ -106,8 +95,8 @@ python stuff
     
 install wiringpi
 
-    git clone git://git.drogon.net/wiringPi
-    cd ~/wiringPi
+    git clone git://github.com/WiringPi/WiringPi.git
+    cd ~/WiringPi
     sudo ./build
     
 install pd 0.49
@@ -125,14 +114,14 @@ enable vnc in raspi-config (this will download software)
 
 # config
 
-    systemctl disable hciuart.service
+    ? systemctl disable hciuart.service
     systemctl disable vncserver-x11-serviced.service
     systemctl disable dnsmasq.service
-    systemctl disable hostapd.service
-    systemctl disable dhcpcd.service
-    systemctl disable wpa_supplicant.service
+    ? systemctl disable hostapd.service
+    ? systemctl disable dhcpcd.service
+    ? systemctl disable wpa_supplicant.service
 
-after startx run
+after startx, then run from terminal
 
     gtk-theme-switch2 /usr/share/themes/Adwaita
 
